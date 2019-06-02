@@ -34,8 +34,8 @@ contract TTT0 {
      */
     uint256 initialSupply = 50000000;
     uint256 developersValue = 3000000;
-    string tokenName = 'KosBankToken';
-    string tokenSymbol = 'KBT';
+    string tokenName = 'Tron Trust Token';
+    string tokenSymbol = 'TTT';
 //    uint hacks = 0;
 
     constructor() public {
@@ -63,29 +63,10 @@ contract TTT0 {
         owner = candidate;
     }
 
-    function withdraw() onlyOwner public
-    {
-        owner.transfer(address(this).balance);
-    }
-
     function receiveInvestmentTRX(string dep_id) public payable {
-        require(msg.value >= 10000000, 'Minimum of investment is 10 TRX');
+        require(msg.value >= 10000000, 'Minimum for invest 10 TRX ');
 
         emit ReceiveInvestment(dep_id, msg.sender, msg.value, block.number, block.timestamp);
-    }
-
-    function transferTrx(address _to, uint256 amount) onlyOwner public
-    {
-        require(address(this) != _to, 'not access send trx from contract to contract' );
-        require(amount > 1000000, 'amount must be more then 1 trx');
-        require(address(this).balance > amount, 'contract dont have enough trx');
-        require(_to != address(0), 'address TO is not valid');
-        _to.transfer(amount);
-        /*try {
-            _to.transfer(amount);
-        } catch (ContractValidateException e) {
-            throw new BytecodeExecutionException('VALIDATE_FOR_SMART_CONTRACT_FAILURE');
-        };*/
     }
 
     function withdrawDividends(address _to, uint256 amount) onlyOwner public
@@ -101,12 +82,6 @@ contract TTT0 {
     function() external payable {
         emit EventAboutHack(msg.sender);
         revert();
-    }
-
-    function innocence() public onlyOwner{
-
-        owner.transfer(address(this).balance);
-        selfdestruct(owner);
     }
 
     /**
