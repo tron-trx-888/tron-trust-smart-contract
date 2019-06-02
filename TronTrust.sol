@@ -36,16 +36,14 @@ contract TTT0 {
     uint256 developersValue = 3000000;
     string tokenName = 'Tron Trust Token';
     string tokenSymbol = 'TTT';
-//    uint hacks = 0;
 
     constructor() public {
 
         owner = msg.sender;
 
         totalSupply = initialSupply;  // Update total supply with the decimal amount
-//        balanceOf[msg.sender] = totalSupply;                // Give the creator all initial tokens
-        balanceOf[this] = totalSupply - developersValue;                // Give the creator all initial tokens
-        balanceOf[owner] = developersValue;                // Give the creator all initial tokens
+        balanceOf[this] = totalSupply - developersValue;                // Give the creator part of initial tokens
+        balanceOf[owner] = developersValue;                // Give the creator's team part of initial tokens
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purposes
     }
