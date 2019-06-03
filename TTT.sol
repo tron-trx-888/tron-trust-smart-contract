@@ -1,9 +1,7 @@
 pragma solidity >=0.4.23;
 
-contract TTT0 {
-    address owner;
-    address candidate;
 
+contract TTT {
     // Public variables of the token
     string public name;
     string public symbol;
@@ -24,62 +22,23 @@ contract TTT0 {
     // This notifies clients about the amount burnt
     event Burn(address indexed from, uint256 value);
 
-    event ReceiveInvestment(string dep_id, address from, uint256 value, uint256 block_number, uint256 block_timestamp);
-    event TransferTRX(address to, uint256 value, uint256 block_number, uint256 block_timestamp);
+    // This notifies about bad request;
     event EventAboutHack(address from);
+
     /**
      * Constructor function
      *
      * Initializes contract with initial supply tokens to the creator of the contract
      */
     uint256 initialSupply = 50000000;
-    uint256 developersValue = 3000000;
-    string tokenName = 'Tron Trust Token';
+    string tokenName = 'TronTrustToken';
     string tokenSymbol = 'TTT';
-
     constructor() public {
 
-        owner = msg.sender;
-
         totalSupply = initialSupply;  // Update total supply with the decimal amount
-        balanceOf[this] = totalSupply - developersValue;                // Give the creator part of initial tokens
-        balanceOf[owner] = developersValue;                // Give the creator's team part of initial tokens
+        balanceOf[msg.sender] = totalSupply;                // Give the creator all initial tokens
         name = tokenName;                                   // Set the name for display purposes
         symbol = tokenSymbol;                               // Set the symbol for display purposes
-    }
-
-    modifier onlyOwner {
-        require(msg.sender == owner, "Only owner can call this function.");
-        _;
-    }
-
-    function changeOwner(address _owner) onlyOwner public {
-        candidate = _owner;
-    }
-
-    function confirmOwner() public {
-        owner = candidate;
-    }
-
-    function receiveInvestmentTRX(string dep_id) public payable {
-        require(msg.value >= 10000000, 'Minimum for invest 10 TRX ');
-
-        emit ReceiveInvestment(dep_id, msg.sender, msg.value, block.number, block.timestamp);
-    }
-
-    function withdrawDividends(address _to, uint256 amount) onlyOwner public
-    {
-        require(address(this) != _to, 'not access to send trx from this contract to this contract' );
-        require(amount > 1000000, 'amount must be more then 1 trx');
-        require(address(this).balance > amount, 'contract dont have enough trx');
-        require(_to != address(0), 'address TO is not valid');
-        _to.transfer(amount);
-        emit TransferTRX(_to, amount, block.number, block.timestamp);
-    }
-
-    function() external payable {
-        emit EventAboutHack(msg.sender);
-        revert();
     }
 
     /**
@@ -111,9 +70,8 @@ contract TTT0 {
      * @param _to The address of the recipient
      * @param _value the amount to send
      */
-    function transfer(address _to, uint256 _value) onlyOwner public returns (bool success) {
-//        _transfer(msg.sender, _to, _value);
-        _transfer(address(this), _to, _value);
+    function transfer(address _to, uint256 _value) public returns (bool success) {
+        _transfer(msg.sender, _to, _value);
         return true;
     }
 
@@ -154,9 +112,9 @@ contract TTT0 {
      *
      * @param _value the amount of money to burn
      */
-    function burn(uint256 _value) onlyOwner public returns (bool success) {
-        require(balanceOf[address(this)] >= _value);   // Check if the sender has enough
-        balanceOf[address(this)] -= _value;            // Subtract from the sender
+    function burn(uint256 _value) public returns (bool success) {
+        require(balanceOf[msg.sender] >= _value);   // Check if the sender has enough
+        balanceOf[msg.sender] -= _value;            // Subtract from the sender
         totalSupply -= _value;                      // Updates totalSupply
         emit Burn(msg.sender, _value);
         return true;
@@ -178,5 +136,10 @@ contract TTT0 {
         totalSupply -= _value;                              // Update totalSupply
         emit Burn(_from, _value);
         return true;
+    }
+
+    function() external payable {
+        emit EventAboutHack(msg.sender);
+        revert();
     }
 }
